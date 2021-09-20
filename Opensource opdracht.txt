@@ -1,0 +1,84 @@
+#!/bin/bash
+echo "Welkom in het script van Erik Loeff in dit script gaan wij een cloud omgeving installeren."
+echo "Je krijgt nu 3 optie's als web server keuze: apache/nginx/lighttpd"
+
+read gekozenwebserver
+
+if [ $gekozenwebserver == "apache" ]
+then 
+
+apt install apache2
+apt install php7.4
+
+elif [ $gekozenwebserver == "nginx" ]
+then
+
+apt install nginx
+apt install php7.4
+
+elif [ $gekozenwebserver == "lighttpd" ]
+then
+apt install lighttpd
+apt install php7.4
+
+else 
+echo "andere webserver opgegeven"
+
+fi
+
+echo "Hier gaan we een database installeren."
+echo "hierbij heb je 2 optie's deze zijn Mysql of mariadb."
+
+read Database
+
+if [ $Database == "Mariadb" ]
+then 
+
+apt install apache2
+
+elif [ $Database == "Mysql" ]
+then
+
+apt install nginx
+
+
+
+else 
+echo "andere database opgegeven"
+
+fi
+
+
+echo "We gaan unzip installeren voor de volgende module"
+
+apt install unzip
+
+
+echo "We gaan de cloud omgeving nextcloud installeren."
+
+wget /var/www/html https://download.nextcloud.com/server/releases/nextcloud-21.0.1.zip
+unzip /var/www/html
+
+systemctl restart apache2.service
+echo " wil je fail2ban installeren de opties zijn ja of nee."
+
+read fail2ban
+
+if [ $fail2ban == "ja" ]
+then 
+apt install fail2ban
+
+elif [ $fail2ban == "nee" ]
+then
+echo "dan installeren we het niet"
+
+else 
+echo "anders geef ja of nee op"
+
+echo "we zetten even een paar belangrijke porten open."
+iptables -A INPUT -p tcp -m multiport --dports 80,443 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
+iptables -A OUTPUT -p tcp -m multiport --dports 80,443 -m conntrack --ctstate ESTABLISHED -j ACCEPT
+
+
+
+
